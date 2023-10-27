@@ -2014,7 +2014,7 @@ MonoBehaviour:
   appleEatingSource: {fileID: 1237720913}
   planetGravity: {fileID: 1397560904}
   snakeHeadController: {fileID: 2026126876}
-  snakeBodyController: {fileID: 919132148115326422}
+  snakeBodyController: {fileID: 1927744822}
   foodSpawner: {fileID: 1551097380}
 --- !u!1 &1487865862
 GameObject:
@@ -2138,6 +2138,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1927744821}
+  - component: {fileID: 1927744822}
   m_Layer: 0
   m_Name: Snake Body
   m_TagString: Untagged
@@ -2160,6 +2161,23 @@ Transform:
   m_Father: {fileID: 782902908}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1927744822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1927744820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5563df1e88e384f8fd80d519d4315e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabsParent: {fileID: 1927744821}
+  bodyPrefab: {fileID: 2493793622074623171, guid: ed3ad8f406dc9ee48a3683b9087f76aa,
+    type: 3}
+  bodyObjects: []
+  distance: 0.5
 --- !u!114 &2026126876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2283,7 +2301,6 @@ GameObject:
   - component: {fileID: 543450652592709487}
   - component: {fileID: 844241807}
   - component: {fileID: 2026126876}
-  - component: {fileID: 919132148115326422}
   m_Layer: 0
   m_Name: Snake Head
   m_TagString: Untagged
@@ -2291,23 +2308,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &919132148115326422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148115326421}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d5563df1e88e384f8fd80d519d4315e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabsParent: {fileID: 1927744821}
-  bodyPrefab: {fileID: 2493793622074623171, guid: ed3ad8f406dc9ee48a3683b9087f76aa,
-    type: 3}
-  bodyObjects: []
-  distance: 0.5
 --- !u!4 &1847322702214109181
 Transform:
   m_ObjectHideFlags: 0

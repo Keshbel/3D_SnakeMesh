@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SnakeBodyController : MonoBehaviour
 {
-    public Action OnEatingApple = null;
+    private GameObject HeadObject => GameSingleton.Instance.snakeHeadController.gameObject;
     
     [Header("Objects")]
     public Transform prefabsParent;
@@ -13,13 +12,24 @@ public class SnakeBodyController : MonoBehaviour
 
     [Header("Options")] 
     [SerializeField] private float distance = 1;
-    
+
+    private void OnEnable()
+    {
+        GameSingleton.Instance.snakeHeadController.onEatingApple += AddBodyPiece;
+    }
+
+    private void OnDisable()
+    {
+        GameSingleton.Instance.snakeHeadController.onEatingApple -= AddBodyPiece;
+    }
+
     private void FixedUpdate()
     {
+        // If you need optimization, then first of all go here. Caching and a separate update system will help.
         for (var index = 0; index < bodyObjects.Count; index++)
         {
             var bodyObject = bodyObjects[index];
-            var followObject = index-1 >= 0 ? bodyObjects[index-1].gameObject : gameObject;
+            var followObject = index-1 >= 0 ? bodyObjects[index-1].gameObject : HeadObject;
             
             bodyObject.transform.LookAt(followObject.transform);
             if (Vector3.Distance(bodyObject.transform.position, followObject.transform.position) > distance) 
@@ -27,51 +37,13 @@ public class SnakeBodyController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Food")) other.GetComponent<Food>().isAbsorbed = true;
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Food")) FakeGravity(other.attachedRigidbody);
-    }
-    
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Food")) other.GetComponent<Food>().isAbsorbed = false;
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.collider.CompareTag("Food"))
-        {
-            // ideally use a prefab pool here, in this test this can be neglected
-            Destroy(other.gameObject);
-            GameSingleton.Instance.foodSpawner.RandomSpawn();
-            
-            OnEatingApple?.Invoke();
-            GameSingleton.Instance.appleEatingSource.PlayOneShot(GameSingleton.Instance.appleEatingSource.clip);
-            AddBodyPiece();
-        }
-    }
-
     public void AddBodyPiece()
     {
-        var lastTransform = bodyObjects.Count > 0 ? bodyObjects[^1].transform : transform;
+        var lastTransform = bodyObjects.Count > 0 ? bodyObjects[^1].transform : HeadObject.transform;
         
         var piece = Instantiate(bodyPrefab, prefabsParent, true);
         piece.transform.position = lastTransform.position -lastTransform.forward * distance;
         
         bodyObjects.Add(piece);
-    }
-    
-    public void FakeGravity(Rigidbody rigidBody)
-    {
-        // set planet gravity direction for the object body
-        Vector3 gravityDir = (rigidBody.position - transform.position).normalized;
-        
-        // apply gravity to objects rigidbody
-        rigidBody.AddForce(gravityDir * GameSingleton.Instance.planetGravity.gravity * 2);
     }
 }

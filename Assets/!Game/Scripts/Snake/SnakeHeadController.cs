@@ -4,6 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class SnakeHeadController : MonoBehaviour
 {
+    public Action onEatingApple = null;
+    
     [Header("Components")]
     [SerializeField] private Rigidbody rb;
     [SerializeField] private VariableJoystick variableJoystick;
@@ -42,6 +44,34 @@ public class SnakeHeadController : MonoBehaviour
         rb.MovePosition(rb.position + playerMesh.forward * (MoveSpeed * Time.fixedDeltaTime)); // + transform.TransformDirection(_moveVector * (moveSpeed * Time.fixedDeltaTime)));
     }
     
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Food")) other.GetComponent<Food>().isAbsorbed = true;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Food")) FakeGravityForFood(other.attachedRigidbody);
+    }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Food")) other.GetComponent<Food>().isAbsorbed = false;
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.collider.CompareTag("Food"))
+        {
+            // ideally use a prefab pool here, in this test this can be neglected
+            Destroy(other.gameObject);
+            GameSingleton.Instance.foodSpawner.RandomSpawn();
+            
+            onEatingApple?.Invoke();
+            GameSingleton.Instance.appleEatingSource.PlayOneShot(GameSingleton.Instance.appleEatingSource.clip);
+        }
+    }
+    
     /// <summary>
     /// Rotate player to face direction of movement
     /// </summary>
@@ -67,5 +97,14 @@ public class SnakeHeadController : MonoBehaviour
         {
             playerMesh.localRotation = targetRotation;
         }
+    }
+    
+    public void FakeGravityForFood(Rigidbody rigidBody)
+    {
+        // set planet gravity direction for the object body
+        Vector3 gravityDir = (rigidBody.position - transform.position).normalized;
+        
+        // apply gravity to objects rigidbody
+        rigidBody.AddForce(gravityDir * GameSingleton.Instance.planetGravity.gravity * 2);
     }
 }

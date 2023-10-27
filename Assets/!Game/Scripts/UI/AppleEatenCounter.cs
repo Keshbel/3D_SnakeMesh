@@ -11,12 +11,12 @@ public class AppleEatenCounter : MonoBehaviour
 
     private void OnEnable()
     {
-        GameSingleton.Instance.snakeBodyController.OnEatingApple += OnCountUpdate;
+        GameSingleton.Instance.snakeHeadController.onEatingApple += OnCountUpdate;
     }
 
     private void OnDisable()
     {
-        GameSingleton.Instance.snakeBodyController.OnEatingApple -= OnCountUpdate;
+        GameSingleton.Instance.snakeHeadController.onEatingApple -= OnCountUpdate;
     }
 
     private void OnCountUpdate()
